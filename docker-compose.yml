@@ -1,7 +1,7 @@
 version: "3"
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:5.3.1
+    image: confluentinc/cp-zookeeper:7.3.2
     container_name: zookeeper
     networks:
        kafka:
@@ -18,7 +18,7 @@ services:
       - zk-txn-logs:/var/lib/zookeeper/log
     
   broker:
-    image: confluentinc/cp-enterprise-kafka:5.3.1
+    image: confluentinc/cp-enterprise-kafka:7.3.2
     container_name: broker
     networks:
        kafka:
@@ -62,7 +62,7 @@ services:
       - ./secrets:/etc/kafka/secrets
 
   schema-registry:
-    image: confluent/cp-schema-registry:5.3.1
+    image: confluent/cp-schema-registry:7.3.2
     depends_on:
       - zookeeper
       - broker
@@ -97,7 +97,7 @@ services:
       - ./secrets:/etc/kafka/secrets
 
   control-center:
-    image: confluent/cp-enterprise-control-center:5.3.1
+    image: confluent/cp-enterprise-control-center:7.3.2
     container_name: control-center
     networks:
        kafka:
@@ -166,7 +166,7 @@ services:
       - ./config:/etc/kafka/config
 
   rest-proxy:
-    image: confluent/cp-kafka-rest:5.3.1
+    image: confluent/cp-kafka-rest:7.3.2
     depends_on:
       - zookeeper
       - broker
