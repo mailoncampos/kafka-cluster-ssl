@@ -35,6 +35,17 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_SECURITY_INTER_BROKER_PROTOCOL: SSL
+      KAFKA_METRIC_REPORTERS: io.confluent.metrics.reporter.ConfluentMetricsReporter
+      CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: kafka1:9092
+      CONFLUENT_METRICS_REPORTER_ZOOKEEPER_CONNECT: zoo1:2181
+      CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
+      CONFLUENT_METRICS_REPORTER_SECURITY_PROTOCOL: SSL
+      CONFLUENT_METRICS_REPORTER_SSL_TRUSTSTORE_LOCATION: /etc/kafka/secrets/kafka.metrics.truststore.jks
+      CONFLUENT_METRICS_REPORTER_SSL_KEYSTORE_LOCATION: /etc/kafka/secrets/kafka.metrics.keystore.jks
+      CONFLUENT_METRICS_REPORTER_SSL_TRUSTSTORE_PASSWORD: confluent
+      CONFLUENT_METRICS_REPORTER_SSL_KEYSTORE_PASSWORD: confluent
+      CONFLUENT_METRICS_REPORTER_SSL_KEY_PASSWORD: confluent
+      CONFLUENT_METRICS_ENABLE: "true"
     volumes:
       - ./secrets:/etc/kafka/secrets
       - ./properties:/etc/kafka/properties
@@ -48,15 +59,32 @@ services:
     depends_on:
       - kafka1
     environment:
+      CONTROL_CENTER_LOG4J_ROOT_LOGLEVEL: INFO
+      CONTROL_CENTER_LOG4J_LOGLEVEL: INFO
       CONTROL_CENTER_BOOTSTRAP_SERVERS: kafka1:9092
+      CONTROL_CENTER_ZOOKEEPER_CONNECT: zoo1:2181
+      CONTROL_CENTER_STREAMS_SECURITY_PROTOCOL: SSL
+      CONTROL_CENTER_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ""
+      CONTROL_CENTER_STREAMS_SSL_TRUSTSTORE_LOCATION: /etc/kafka/secrets/kafka.control-center.truststore.jks
+      CONTROL_CENTER_STREAMS_SSL_KEYSTORE_LOCATION: /etc/kafka/secrets/kafka.control-center.keystore.jks
+      CONTROL_CENTER_STREAMS_SSL_TRUSTSTORE_PASSWORD: confluent
+      CONTROL_CENTER_STREAMS_SSL_KEYSTORE_PASSWORD: confluent
+      CONTROL_CENTER_STREAMS_SSL_KEY_PASSWORD: confluent
+      CONTROL_CENTER_STREAMS_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: "HTTPS"
       CONTROL_CENTER_REPLICATION_FACTOR: 1
       CONTROL_CENTER_INTERNAL_TOPICS_PARTITIONS: 1
       CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS: 1
-      CONTROL_CENTER_SECURITY_PROTOCOL: SSL
-      CONTROL_CENTER_SECURITY_SSL_KEYSTORE_FILENAME: controlcenter.jks
-      CONTROL_CENTER_SECURITY_SSL_KEYSTORE_CREDENTIALS: controlcenter_keystore_creds
-      CONTROL_CENTER_SECURITY_SSL_KEY_CREDENTIALS: controlcenter_sslkey_creds
-      CONTROL_CENTER_SECURITY_SSL_TRUSTSTORE_FILENAME: controlcenter.truststore.jks
-      CONTROL_CENTER_SECURITY_SSL_TRUSTSTORE_CREDENTIALS: controlcenter_truststore_creds
+      CONFLUENT_METRICS_TOPIC_REPLICATION: 1
+      CONTROL_CENTER_REST_LISTENERS: "http://0.0.0.0:9021"
+      CONTROL_CENTER_REST_SSL_TRUSTSTORE_LOCATION: /etc/kafka/secrets/kafka.control-center.truststore.jks
+      CONTROL_CENTER_REST_SSL_TRUSTSTORE_PASSWORD: confluent
+      CONTROL_CENTER_REST_SSL_KEYSTORE_LOCATION: /etc/kafka/secrets/kafka.control-center.keystore.jks
+      CONTROL_CENTER_REST_SSL_KEYSTORE_PASSWORD: confluent
+      CONTROL_CENTER_REST_SSL_KEY_PASSWORD: confluent
+      CONTROL_CENTER_OPTS: -Djavax.net.ssl.trustStore=/etc/kafka/secrets/kafka.control-center.truststore.jks
+                  -Djavax.net.ssl.trustStorePassword=kafka
+                  -Djavax.net.ssl.keyStore=/etc/kafka/secrets/kafka.control-center.keystore.jks
+                  -Djavax.net.ssl.keyStorePassword=kafka
+      PORT: 9021
     volumes:
-      - ./control-center-secrets:/etc/confluent-control-center/secrets
+      - ./secrets:/etc/kafka/secrets
